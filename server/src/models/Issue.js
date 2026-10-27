@@ -1,0 +1,10 @@
+import mongoose from 'mongoose';
+export const ISSUE_STATUSES = ['Reported', 'Assigned', 'In Progress', 'Resolved', 'Closed', 'Rejected'];
+export const ISSUE_PRIORITIES = ['Low', 'Medium', 'High', 'Urgent'];
+const noteSchema = new mongoose.Schema({ author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, authorNameSnapshot: { type: String, required: true }, body: { type: String, required: true, maxlength: 2000 }, visibility: { type: String, enum: ['public', 'internal'], default: 'internal' }, createdAt: { type: Date, default: Date.now } }, { _id: true });
+const historySchema = new mongoose.Schema({ actor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, actorNameSnapshot: String, from: String, to: String, message: String, createdAt: { type: Date, default: Date.now } }, { _id: false });
+const issueSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true, minlength: 5, maxlength: 120 }, description: { type: String, required: true, trim: true, minlength: 10, maxlength: 5000 }, category: { type: String, required: true, enum: ['Electrical', 'Plumbing', 'Cleanliness', 'Internet', 'Furniture', 'Safety', 'Other'] }, location: { type: String, required: true, trim: true, maxlength: 160 },
+  reporter: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true }, reporterNameSnapshot: { type: String, required: true }, status: { type: String, enum: ISSUE_STATUSES, default: 'Reported', index: true }, priority: { type: String, enum: ISSUE_PRIORITIES, default: 'Medium' }, assignedStaff: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, index: true }, assignedTeam: { type: mongoose.Schema.Types.ObjectId, ref: 'Team', default: null, index: true }, resolutionDetails: { type: String, trim: true, maxlength: 2000, default: '' }, notes: [noteSchema], history: [historySchema]
+}, { timestamps: true });
+export default mongoose.model('Issue', issueSchema);

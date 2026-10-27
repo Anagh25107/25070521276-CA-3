@@ -1,0 +1,3 @@
+import 'dotenv/config'; import { connectDB } from './config/db.js'; import { createApp } from './app.js';
+if(!process.env.SESSION_SECRET||process.env.SESSION_SECRET.length<32){console.error('SESSION_SECRET must be at least 32 characters.');process.exit(1)}
+try{await connectDB();const app=createApp();const port=Number(process.env.SERVER_PORT||5000);app.listen(port,()=>console.log(`FixMyCampus API listening on http://localhost:${port}`));}catch(e){console.error('Startup failed:',e.message);process.exit(1)}
